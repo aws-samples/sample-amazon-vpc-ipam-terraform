@@ -550,12 +550,12 @@ module "ipam" {
 }
 ```
 
-> [!TIP]
-> Terraform does not support "spreading" maps — e.g., like JavaScript's `{ ...var }`. So, as illustrated in my "partially-inlined" example (for `reg_ipam_configs`) above, I needed to declare a new variable (`additional_reg_ipam_configs`) in the `variables.tf` file, assign a value to the variable (or value**s**, since `additional_reg_ipam_configs` is a map) in the `terraform.tfvars` file, and use `merge()` to combine the inlined and variable-driven maps.
-
 See the [example tfvars file](./terraform.tfvars.example) for additional insights into fully specified arguments.
 
 </details>
+
+> [!TIP]
+> Terraform **does not** support "spreading" maps — e.g., like JavaScript's `{ ...var }`. So, as illustrated in my "partially-inlined" example (for `reg_ipam_configs`) above, I needed to declare a new variable (`additional_reg_ipam_configs`) in the `variables.tf` file, assign a value to the variable (or value**s**, since `additional_reg_ipam_configs` is a map) in the `terraform.tfvars` file, and use `merge()` to combine the inlined and variable-driven maps.
 
 ---
 
