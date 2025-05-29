@@ -1,0 +1,8 @@
+streamlit>=1.31.0
+pandas>=2.0.0
+ipaddress>=1.0.23
+plotly>=5.18.0
+typing>=3.7.4
+numpy>=1.24.0
+watchdog>=3.0.0
+networkx>=3.1
