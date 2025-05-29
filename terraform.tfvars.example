@@ -1,0 +1,226 @@
+#==============================================================================
+# Sample Terraform Implementation for Hierarchical IPAM on AWS
+#
+# This code demonstrates how to implement hierarchical IP Address Management
+# across multiple AWS regions, business units, and environments.
+#
+# IMPORTANT: This code is provided as a sample for educational purposes.
+# Before using in production, review security configurations and customize
+# to meet your organizational requirements.
+#==============================================================================
+
+#=======================================
+# Example Provider and Region Config
+#=======================================
+
+provider_region   = "us-east-1"  # Primary region where IPAM service is deployed
+operating_regions = [            # All regions where IPAM will manage IP space
+  "us-east-1",  # US East (N. Virginia)
+  "us-west-2",  # US West (Oregon)
+  "eu-west-1",  # EU West (Ireland)
+  "ap-southeast-1"  # Asia Pacific (Singapore)
+]
+
+#=======================================
+# Example IPAM Sharing Config
+#=======================================
+
+share_name = "enterprise-ipam-pools"  # Name for the RAM share
+
+#=======================================
+# Example Top-Level IPAM Pool Config
+#=======================================
+
+top_name        = "enterprise-ipam-global"
+top_description = "Enterprise-wide Global IPAM Pool"
+top_cidr        = ["10.0.0.0/8"]  # RFC1918 private address space
+
+#=======================================
+# Example Regional IPAM Pool Config
+#=======================================
+
+reg_ipam_configs = {
+  us-east-1 = {
+    name        = "ipam-regional-us-east-1"
+    description = "Regional IPAM Pool for US East (N. Virginia)"
+    cidr        = ["10.0.0.0/10"]  # 25% of total address space
+    locale      = "us-east-1"
+  }
+  us-west-2 = {
+    name        = "ipam-regional-us-west-2"
+    description = "Regional IPAM Pool for US West (Oregon)"
+    cidr        = ["10.64.0.0/10"]  # 25% of total address space
+    locale      = "us-west-2"
+  }
+  eu-west-1 = {
+    name        = "ipam-regional-eu-west-1"
+    description = "Regional IPAM Pool for EU West (Ireland)"
+    cidr        = ["10.128.0.0/10"]  # 25% of total address space
+    locale      = "eu-west-1"
+  }
+  ap-southeast-1 = {
+    name        = "ipam-regional-ap-southeast-1"
+    description = "Regional IPAM Pool for AP Southeast (Singapore)"
+    cidr        = ["10.192.0.0/10"]  # 25% of total address space
+    locale      = "ap-southeast-1"
+  }
+}
+
+#=======================================
+# Example Business Unit IPAM Pool Config
+#=======================================
+
+bu_ipam_configs = {
+  us-east-1 = {
+    "FIN" = {  # Finance
+      name        = "ipam-bu-fin-us-east-1"
+      description = "Finance Business Unit IPAM Pool for US East (N. Virginia)"
+      cidr        = ["10.0.0.0/12"]  # 25% of regional address space
+    }
+    "MKT" = {  # Marketing
+      name        = "ipam-bu-mkt-us-east-1"
+      description = "Marketing Business Unit IPAM Pool for US East (N. Virginia)"
+      cidr        = ["10.16.0.0/12"]  # 25% of regional address space
+    }
+    "ENG" = {  # Engineering
+      name        = "ipam-bu-eng-us-east-1"
+      description = "Engineering Business Unit IPAM Pool for US East (N. Virginia)"
+      cidr        = ["10.32.0.0/12"]  # 25% of regional address space
+    }
+    "OPS" = {  # Operations
+      name        = "ipam-bu-ops-us-east-1"
+      description = "Operations Business Unit IPAM Pool for US East (N. Virginia)"
+      cidr        = ["10.48.0.0/12"]  # 25% of regional address space
+    }
+  }
+  us-west-2 = {
+    "FIN" = {  # Finance
+      name        = "ipam-bu-fin-us-west-2"
+      description = "Finance Business Unit IPAM Pool for US West (Oregon)"
+      cidr        = ["10.64.0.0/12"]  # 25% of regional address space
+    }
+    "MKT" = {  # Marketing
+      name        = "ipam-bu-mkt-us-west-2"
+      description = "Marketing Business Unit IPAM Pool for US West (Oregon)"
+      cidr        = ["10.80.0.0/12"]  # 25% of regional address space
+    }
+    "ENG" = {  # Engineering
+      name        = "ipam-bu-eng-us-west-2"
+      description = "Engineering Business Unit IPAM Pool for US West (Oregon)"
+      cidr        = ["10.96.0.0/12"]  # 25% of regional address space
+    }
+    "OPS" = {  # Operations
+      name        = "ipam-bu-ops-us-west-2"
+      description = "Operations Business Unit IPAM Pool for US West (Oregon)"
+      cidr        = ["10.112.0.0/12"]  # 25% of regional address space
+    }
+  }
+  eu-west-1 = {
+    "FIN" = {  # Finance
+      name        = "ipam-bu-fin-eu-west-1"
+      description = "Finance Business Unit IPAM Pool for EU West (Ireland)"
+      cidr        = ["10.128.0.0/12"]  # 25% of regional address space
+    }
+    "MKT" = {  # Marketing
+      name        = "ipam-bu-mkt-eu-west-1"
+      description = "Marketing Business Unit IPAM Pool for EU West (Ireland)"
+      cidr        = ["10.144.0.0/12"]  # 25% of regional address space
+    }
+    "ENG" = {  # Engineering
+      name        = "ipam-bu-eng-eu-west-1"
+      description = "Engineering Business Unit IPAM Pool for EU West (Ireland)"
+      cidr        = ["10.160.0.0/12"]  # 25% of regional address space
+    }
+    "OPS" = {  # Operations
+      name        = "ipam-bu-ops-eu-west-1"
+      description = "Operations Business Unit IPAM Pool for EU West (Ireland)"
+      cidr        = ["10.176.0.0/12"]  # 25% of regional address space
+    }
+  }
+  ap-southeast-1 = {
+    "FIN" = {  # Finance
+      name        = "ipam-bu-fin-ap-southeast-1"
+      description = "Finance Business Unit IPAM Pool for AP Southeast (Singapore)"
+      cidr        = ["10.192.0.0/12"]  # 25% of regional address space
+    }
+    "MKT" = {  # Marketing
+      name        = "ipam-bu-mkt-ap-southeast-1"
+      description = "Marketing Business Unit IPAM Pool for AP Southeast (Singapore)"
+      cidr        = ["10.208.0.0/12"]  # 25% of regional address space
+    }
+    "ENG" = {  # Engineering
+      name        = "ipam-bu-eng-ap-southeast-1"
+      description = "Engineering Business Unit IPAM Pool for AP Southeast (Singapore)"
+      cidr        = ["10.224.0.0/12"]  # 25% of regional address space
+    }
+    "OPS" = {  # Operations
+      name        = "ipam-bu-ops-ap-southeast-1"
+      description = "Operations Business Unit IPAM Pool for AP Southeast (Singapore)"
+      cidr        = ["10.240.0.0/12"]  # 25% of regional address space
+    }
+  }
+}
+
+#=======================================
+# Example Environment IPAM Pool Config
+#=======================================
+
+env_ipam_configs = {
+  us-east-1 = {
+    FIN = {
+      core = {
+        name          = "ipam-core-fin-us-east-1"
+        description   = "Core Environment IPAM Pool for Finance in US East (N. Virginia)"
+        cidr          = ["10.0.0.0/14"]
+        reserved_cidr = "10.0.0.0/16"  # Reserved for shared services
+      }
+      prod = {
+        name          = "ipam-prod-fin-us-east-1"
+        description   = "Production Environment IPAM Pool for Finance in US East (N. Virginia)"
+        cidr          = ["10.4.0.0/14"]
+        reserved_cidr = "10.4.0.0/16"  # Reserved for DR/backup
+      }
+      dev = {
+        name          = "ipam-dev-fin-us-east-1"
+        description   = "Development Environment IPAM Pool for Finance in US East (N. Virginia)"
+        cidr          = ["10.8.0.0/14"]
+        reserved_cidr = ""  # No reservation needed
+      }
+      qa = {
+        name          = "ipam-qa-fin-us-east-1"
+        description   = "QA Environment IPAM Pool for Finance in US East (N. Virginia)"
+        cidr          = ["10.12.0.0/14"]
+        reserved_cidr = ""  # No reservation needed
+      }
+    }
+    MKT = {
+      core = {
+        name          = "ipam-core-mkt-us-east-1"
+        description   = "Core Environment IPAM Pool for Marketing in US East (N. Virginia)"
+        cidr          = ["10.16.0.0/14"]
+        reserved_cidr = "10.16.0.0/16"  # Reserved for shared services
+      }
+      prod = {
+        name          = "ipam-prod-mkt-us-east-1"
+        description   = "Production Environment IPAM Pool for Marketing in US East (N. Virginia)"
+        cidr          = ["10.20.0.0/14"]
+        reserved_cidr = "10.20.0.0/16"  # Reserved for DR/backup
+      }
+      dev = {
+        name          = "ipam-dev-mkt-us-east-1"
+        description   = "Development Environment IPAM Pool for Marketing in US East (N. Virginia)"
+        cidr          = ["10.24.0.0/14"]
+        reserved_cidr = ""  # No reservation needed
+      }
+      qa = {
+        name          = "ipam-qa-mkt-us-east-1"
+        description   = "QA Environment IPAM Pool for Marketing in US East (N. Virginia)"
+        cidr          = ["10.28.0.0/14"]
+        reserved_cidr = ""  # No reservation needed
+      }
+    }
+    # Truncated for brevity - ENG and OPS would follow similar patterns
+  }
+  # Truncated for brevity - other regions (us-west-2, eu-west-1, ap-southeast-1)
+  # would follow similar patterns
+}
