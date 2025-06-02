@@ -217,3 +217,27 @@ resource "aws_ram_resource_association" "share_assoc" {
     aws_ram_principal_association.ram_shares_prin_assoc
   ]
 }
+
+#=======================================
+# Reserved CIDR Allocations
+#=======================================
+
+resource "aws_vpc_ipam_pool_cidr_allocation" "reserved_cidr" {
+  for_each     = local.reserved_cidr_allocations
+
+  ipam_pool_id = aws_vpc_ipam_pool.env[each.value.pool_key].id
+  cidr         = each.value.cidr
+  description  = each.value.description
+
+  # Add validation check
+  lifecycle {
+    precondition {
+      condition     = length(local.reserved_cidr_validation_errors) == 0
+      error_message = "One or more reserved CIDRs are not properly contained within their parent environment CIDR blocks. Please ensure all reserved CIDRs are valid subnets of their environment pools."
+    }
+  }
+
+  depends_on = [
+    aws_vpc_ipam_pool_cidr.env_cidr
+  ]
+}
