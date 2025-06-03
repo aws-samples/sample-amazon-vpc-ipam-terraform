@@ -145,4 +145,47 @@ locals {
     for key, pool in aws_vpc_ipam_pool.env :
     key => pool.description
   }
+
+  #=========================================
+  # Reserved CIDR Processing
+  #=========================================
+
+  # Extract all environment pools with reserved CIDRs
+  env_reserved_cidrs = flatten([
+    for region, env_configs in var.env_ipam_configs : [
+      for bu, bu_envs in env_configs : [
+        for env, env_config in bu_envs : {
+          region         = region
+          bu             = bu
+          env            = env
+          pool_key       = "${region}-${bu}-${env}"  # Match the key format used for env pools
+          cidr           = env_config.reserved_cidr
+          description    = "Reserved CIDR block for ${env_config.name}"
+        }
+        if env_config.reserved_cidr != ""  # Only include environments with non-empty reserved_cidr
+      ]
+    ]
+  ])
+
+  # Convert to a map with unique keys for easier lookup
+  reserved_cidr_allocations = {
+    for item in local.env_reserved_cidrs :
+    "${item.pool_key}-${item.cidr}" => item
+  }
+
+  # For validation: Check if each reserved CIDR is within its parent environment CIDR
+  reserved_cidr_validation = [
+    for item in local.env_reserved_cidrs : {
+      pool_key     = item.pool_key
+      reserved_cidr = item.cidr
+      env_cidr     = var.env_ipam_configs[item.region][item.bu][item.env].cidr[0]
+      is_valid     = cidrsubnet(var.env_ipam_configs[item.region][item.bu][item.env].cidr[0], 0, 0) == cidrsubnet(item.cidr, 0, 0)
+    }
+  ]
+
+  # Extract validation errors for reporting
+  reserved_cidr_validation_errors = [
+    for check in local.reserved_cidr_validation : check
+    if check.is_valid == false
+  ]
 }

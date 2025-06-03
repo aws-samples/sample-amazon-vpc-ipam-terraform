@@ -258,7 +258,7 @@ Key configuration parameters for this solution include:
 5. **Environment Configurations**: Per-environment settings including:
    - Environment names and descriptions
    - Environment-level CIDR allocations
-   - Reserved CIDR blocks
+   - Reserved CIDR blocks (see [RESERVED-CIDRS.md](./RESERVED-CIDRS.md) for details)
 
 </details>
 
@@ -313,21 +313,22 @@ For more detailed information about the IPAM Configurator, see the [README](./ip
 
 The repository is organized with the following structure:
 
-- **Root Module**: Orchestrates the deployment and provides input variables
-- **IPAM Module**: Core implementation of the IPAM architecture
-- **Tags Module**: Standardized tagging for all resources
+- **Terraform Directory**: Contains all Terraform code for the implementation
+  - **Root Module**: Orchestrates the deployment and provides input variables
+  - **IPAM Module**: Core implementation of the IPAM architecture
+  - **Tags Module**: Standardized tagging for all resources
 - **IPAM Configurator**: Web-based tool for generating terraform.tfvars
 
 Key files include:
 
-- `main.tf`: Primary module orchestration
-- `variables.tf`: Input variables for configuration
-- `outputs.tf`: Output values for downstream consumption
-- `data.tf`: Data sources for AWS resources
-- `tags.tf`: Tagging configuration
-- `modules/ipam/main.tf`: IPAM resource definitions
-- `modules/ipam/locals.tf`: Validation logic and transformations
-- `modules/tags/main.tf`: Tag standardization logic
+- `terraform/main.tf`: Primary module orchestration
+- `terraform/variables.tf`: Input variables for configuration
+- `terraform/outputs.tf`: Output values for downstream consumption
+- `terraform/data.tf`: Data sources for AWS resources
+- `terraform/tags.tf`: Tagging configuration
+- `terraform/modules/ipam/main.tf`: IPAM resource definitions
+- `terraform/modules/ipam/locals.tf`: Validation logic and transformations
+- `terraform/modules/tags/main.tf`: Tag standardization logic
 - `ipam-figurator/`: IPAM configuration generation tool
 
 ---
@@ -591,4 +592,4 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 ## License
 
-This library is licensed under the MIT-0 License. See the LICENSE file.
+This library is licensed under the MIT-0 License. See the [LICENSE](./LICENSE) file.
