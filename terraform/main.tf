@@ -10,7 +10,7 @@
 #==============================================================================
 
 module "ipam" {
-  source  = "./modules/ipam"
+  source            = "./modules/ipam"
   top_name          = var.top_name
   top_description   = var.top_description
   top_cidr          = var.top_cidr

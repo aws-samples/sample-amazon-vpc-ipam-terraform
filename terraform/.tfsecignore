@@ -1,8 +1,0 @@
-.git/
-.vscode/
-.terraform/
-_flatten/
-_notes/
-_scans/
-_testing/
-examples/

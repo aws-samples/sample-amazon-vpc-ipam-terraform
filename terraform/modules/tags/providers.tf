@@ -19,7 +19,7 @@ terraform {
   # experiments      = [module_variable_optional_attrs]
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
       # Require AWS provider v5.11.0 or higher for:
       # - Support for advanced IPAM features
       # - Proper RAM sharing functionality

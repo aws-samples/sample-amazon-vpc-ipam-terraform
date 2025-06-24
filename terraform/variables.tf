@@ -30,7 +30,7 @@ variable "operating_regions" {
     At least one region must be specified.
   EOT
   type        = list(string)
-  
+
   validation {
     condition     = length(var.operating_regions) > 0
     error_message = "At least one operating region must be specified."
@@ -119,11 +119,11 @@ variable "reg_ipam_configs" {
       }
     }
   EOT
-  type        = map(object({
-    name        = string  # Display name for the regional pool
-    description = string  # Detailed description of the regional pool's purpose
-    cidr        = list(string)  # List containing single CIDR allocation for this region
-    locale      = string  # AWS region identifier (e.g., us-east-1)
+  type = map(object({
+    name        = string       # Display name for the regional pool
+    description = string       # Detailed description of the regional pool's purpose
+    cidr        = list(string) # List containing single CIDR allocation for this region
+    locale      = string       # AWS region identifier (e.g., us-east-1)
   }))
 
   validation {
@@ -134,7 +134,7 @@ variable "reg_ipam_configs" {
   validation {
     condition = alltrue([
       for k, v in var.reg_ipam_configs :
-        can(regex("^[a-z]{2}-[a-z]+-[0-9]{1}$", v.locale))
+      can(regex("^[a-z]{2}-[a-z]+-[0-9]{1}$", v.locale))
     ])
     error_message = "Each regional IPAM configuration must have a valid AWS region locale."
   }
@@ -142,8 +142,8 @@ variable "reg_ipam_configs" {
   validation {
     condition = alltrue([
       for k, v in var.reg_ipam_configs :
-        length(v.cidr) == 1 &&
-        can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", v.cidr[0]))
+      length(v.cidr) == 1 &&
+      can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", v.cidr[0]))
     ])
     error_message = "Each regional IPAM configuration must have exactly one valid IPv4 CIDR block."
   }
@@ -167,10 +167,10 @@ variable "bu_ipam_configs" {
       }
     }
   EOT
-  type        = map(map(object({
-    name        = string  # Display name for the business unit pool
-    description = string  # Detailed description of the business unit pool's purpose
-    cidr        = list(string)  # List containing single CIDR allocation for this business unit
+  type = map(map(object({
+    name        = string       # Display name for the business unit pool
+    description = string       # Detailed description of the business unit pool's purpose
+    cidr        = list(string) # List containing single CIDR allocation for this business unit
   })))
 
   validation {
@@ -182,8 +182,8 @@ variable "bu_ipam_configs" {
     condition = alltrue(flatten([
       for region, bus in var.bu_ipam_configs : [
         for bu, config in bus :
-          length(config.cidr) == 1 &&
-          can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", config.cidr[0]))
+        length(config.cidr) == 1 &&
+        can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", config.cidr[0]))
       ]
     ]))
     error_message = "Each business unit IPAM configuration must have exactly one valid IPv4 CIDR block."
@@ -213,11 +213,11 @@ variable "env_ipam_configs" {
     Note: The reserved_cidr is an optional subnet that can be explicitly reserved within
     the environment CIDR block for specific purposes (e.g., shared services, gateways).
   EOT
-  type        = map(map(map(object({
-    name          = string  # Display name for the environment pool
-    description   = string  # Detailed description of the environment pool
-    cidr          = list(string)  # List containing single CIDR for this environment
-    reserved_cidr = string  # Optional CIDR to reserve within this environment
+  type = map(map(map(object({
+    name          = string       # Display name for the environment pool
+    description   = string       # Detailed description of the environment pool
+    cidr          = list(string) # List containing single CIDR for this environment
+    reserved_cidr = string       # Optional CIDR to reserve within this environment
   }))))
 
   validation {
@@ -230,9 +230,9 @@ variable "env_ipam_configs" {
       for region, bus in var.env_ipam_configs : [
         for bu, envs in bus : [
           for env, env_config in envs :
-            length(env_config.cidr) == 1 &&
-            can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", env_config.cidr[0])) &&
-            (env_config.reserved_cidr == "" || can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", env_config.reserved_cidr)))
+          length(env_config.cidr) == 1 &&
+          can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", env_config.cidr[0])) &&
+          (env_config.reserved_cidr == "" || can(regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$", env_config.reserved_cidr)))
         ]
       ]
     ]))

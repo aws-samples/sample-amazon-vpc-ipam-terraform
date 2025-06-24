@@ -20,7 +20,7 @@ variable "operating_regions" {
     At least one region must be specified.
   EOT
   type        = list(string)
-  
+
   validation {
     condition     = length(var.operating_regions) > 0
     error_message = "At least one operating region must be specified."
@@ -43,7 +43,7 @@ variable "organization_arn" {
     Format: arn:aws:organizations::<management-account-id>:organization/o-<organization-id>
   EOT
   type        = string
-  
+
   validation {
     condition     = can(regex("^arn:aws:organizations::", var.organization_arn))
     error_message = "Organization ARN must be a valid AWS Organizations ARN."
@@ -80,7 +80,7 @@ variable "top_cidr" {
     Only one CIDR block is currently supported at this level.
   EOT
   type        = list(string)
-  
+
   validation {
     condition     = length(var.top_cidr) == 1
     error_message = "Exactly one top-level CIDR block must be specified."
@@ -103,11 +103,11 @@ variable "reg_ipam_configs" {
       }
     }
   EOT
-  type        = map(object({
-    name        = string  # Display name for the regional pool
-    description = string  # Detailed description of the regional pool's purpose
-    cidr        = list(string)  # List containing single CIDR allocation for this region
-    locale      = string  # AWS region identifier (e.g., us-east-1)
+  type = map(object({
+    name        = string       # Display name for the regional pool
+    description = string       # Detailed description of the regional pool's purpose
+    cidr        = list(string) # List containing single CIDR allocation for this region
+    locale      = string       # AWS region identifier (e.g., us-east-1)
   }))
 }
 
@@ -129,10 +129,10 @@ variable "bu_ipam_configs" {
       }
     }
   EOT
-  type        = map(map(object({
-    name        = string  # Display name for the business unit pool
-    description = string  # Detailed description of the business unit pool's purpose
-    cidr        = list(string)  # List containing single CIDR allocation for this business unit
+  type = map(map(object({
+    name        = string       # Display name for the business unit pool
+    description = string       # Detailed description of the business unit pool's purpose
+    cidr        = list(string) # List containing single CIDR allocation for this business unit
   })))
 }
 
@@ -160,11 +160,11 @@ variable "env_ipam_configs" {
     Note: The reserved_cidr is an optional subnet that can be explicitly reserved within
     the environment CIDR block for specific purposes (e.g., shared services, gateways).
   EOT
-  type        = map(map(map(object({
-    name          = string  # Display name for the environment pool
-    description   = string  # Detailed description of the environment pool
-    cidr          = list(string)  # List containing single CIDR for this environment
-    reserved_cidr = string  # Optional CIDR to reserve within this environment
+  type = map(map(map(object({
+    name          = string       # Display name for the environment pool
+    description   = string       # Detailed description of the environment pool
+    cidr          = list(string) # List containing single CIDR for this environment
+    reserved_cidr = string       # Optional CIDR to reserve within this environment
   }))))
 }
 

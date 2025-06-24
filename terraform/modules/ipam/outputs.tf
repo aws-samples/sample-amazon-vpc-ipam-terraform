@@ -36,7 +36,7 @@ output "bu_pool_ids" {
     Format: {region-bu => pool_id}
     These pools are children of regional pools and represent business unit allocations.
   EOT
-  value       = {
+  value = {
     for key, pool in aws_vpc_ipam_pool.bu :
     key => pool.id
   }
@@ -48,7 +48,7 @@ output "bu_cidrs" {
     Format: {region => {bu => cidr_list}}
     These CIDR blocks define the address space available to each business unit within a region.
   EOT
-  value       = {
+  value = {
     for region, bu_configs in var.bu_ipam_configs : region => {
       for bu, bu_config in bu_configs : bu => bu_config.cidr
     }
@@ -62,7 +62,7 @@ output "env_pool_ids" {
     These are the leaf-level pools used for allocating CIDRs to actual VPCs.
     Typical environments include: dev, qa, prod, and core.
   EOT
-  value       = {
+  value = {
     for key, pool in aws_vpc_ipam_pool.env :
     key => pool.id
   }
@@ -75,7 +75,7 @@ output "env_cidrs" {
     These are the actual CIDR ranges available for VPC allocations in each environment.
     VPC CIDR allocations should be requested from these pools.
   EOT
-  value       = {
+  value = {
     for region, env_configs in var.env_ipam_configs : region => {
       for bu, bu_envs in env_configs : bu => {
         for env, env_config in bu_envs : env => env_config.cidr
@@ -104,7 +104,7 @@ output "ram_principal_associations" {
     Format: {key => {resource_share_arn => arn, principal => principal_id}}
     Used for auditing cross-account access permissions.
   EOT
-  value       = {
+  value = {
     for k, v in aws_ram_principal_association.ram_shares_prin_assoc :
     k => {
       resource_share_arn = v.resource_share_arn
@@ -120,7 +120,7 @@ output "ram_resource_associations" {
     Format: {key => {association_arn => arn, association_id => id}}
     Used for tracking which resources are shared and their association identifiers.
   EOT
-  value       = {
+  value = {
     for k, v in aws_ram_resource_association.share_assoc :
     k => {
       association_arn = v.resource_arn
