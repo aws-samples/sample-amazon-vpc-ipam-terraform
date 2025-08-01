@@ -8,6 +8,12 @@
 
 This solution provides code to implement a shared, multi-account, multi-region, hierarchical Amazon VPC IP Address Manager (IPAM) specification using Terraform. Alongside the included companion Streamlit web application (Python), AWS cloud architects, engineers, and/or developers can vastly accelerate VPC/network planning, IP address space visualization, and the eventual Terraform deployment of their Amazon VPC IPAM specification. The specification is shared with AWS Organizations using AWS Resource Access Manager (RAM), and guidance for potential use in other Terraform modules — e.g., with Account Factory for Terraform (AFT) — is provided within this repository's [README](#integration-patterns).
 
+<div align="center">
+
+![IPAM Configurator](./img/IPAM-Configurator.gif)
+
+</div>
+
 ## Table of Contents
 
 - [Executive Summary](#executive-summary)
